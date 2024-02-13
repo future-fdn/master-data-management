@@ -39,9 +39,6 @@ const authOptions: NextAuthConfig = {
 
       if (!existingUser) return token;
 
-      const existingAccount = await getAccountByUserId(existingUser.id);
-
-      token.isOAuth = !!existingAccount;
       token.name = existingUser.name;
       token.email = existingUser.email;
       token.role = existingUser.role;
