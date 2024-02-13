@@ -1,6 +1,6 @@
 import { db } from "@/server/db";
 import { PrismaAdapter } from "@auth/prisma-adapter";
-import NextAuth, { NextAuthConfig, type DefaultSession } from "next-auth";
+import NextAuth, { NextAuthConfig } from "next-auth";
 
 import { getAccountByUserId } from "@/data/account";
 import { getUserById } from "@/data/user";
@@ -28,7 +28,6 @@ const authOptions: NextAuthConfig = {
       if (session.user) {
         session.user.name = token.name;
         session.user.email = token.email ?? "";
-        session.user.isOAuth = token.isOAuth as boolean;
       }
 
       return session;
@@ -58,5 +57,5 @@ export const {
   auth,
   signIn,
   signOut,
-  unstable_update,
+  update,
 } = NextAuth(authOptions);
