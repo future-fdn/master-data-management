@@ -1,12 +1,16 @@
 import "@/styles/globals.css";
 
-import { auth } from "@/server/auth";
-import { SessionProvider } from "next-auth/react";
-import { Inter } from "next/font/google";
+import { Inter, Noto_Sans_Thai } from "next/font/google";
 
 const inter = Inter({
   subsets: ["latin"],
-  variable: "--font-sans",
+  variable: "--font-inter",
+});
+
+const notoSansThai = Noto_Sans_Thai({
+  subsets: ["thai"],
+  variable: "--font-thai",
+  display: "swap",
 });
 
 export const metadata = {
@@ -20,13 +24,13 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  const session = await auth();
-
   return (
-    <SessionProvider session={session}>
-      <html lang="en">
-        <body className={`font-sans ${inter.variable}`}>{children}</body>
-      </html>
-    </SessionProvider>
+    <html lang="en">
+      <body
+        className={`${inter.variable} ${notoSansThai.variable} h-screen w-screen`}
+      >
+        {children}
+      </body>
+    </html>
   );
 }

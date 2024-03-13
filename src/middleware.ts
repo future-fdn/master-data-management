@@ -1,6 +1,6 @@
-import NextAuth from "next-auth";
-
-import authConfig from "./server/auth.config";
+import * as jose from "jose";
+import { NextRequest } from "next/server";
+import { env } from "./env";
 import {
   DEFAULT_LOGIN_REDIRECT,
   apiPrefix,
@@ -8,17 +8,32 @@ import {
   publicRoutes,
 } from "./server/routes";
 
-const { auth } = NextAuth(authConfig);
+const jwtConfig = {
+  secret: new TextEncoder().encode(env.SECRET),
+};
 
-export default auth((req) => {
+export async function middleware(req: NextRequest) {
   const { nextUrl } = req;
-  const isLoggedIn = !!req.auth;
+  let isLoggedIn = false;
   const isApiAuthRoute = nextUrl.pathname.startsWith(apiPrefix);
   const isPublicRoute = publicRoutes.includes(nextUrl.pathname);
   const isAuthRoute = authRoutes.includes(nextUrl.pathname);
 
   if (isApiAuthRoute) {
     return null;
+  }
+
+  const cookie = req.cookies.get("token");
+  try {
+    await jose
+      .jwtVerify(cookie?.value ?? "", jwtConfig.secret)
+      .then((result) => {
+        if (result.payload.exp ?? 0 > Math.floor(Date.now() / 1000)) {
+          isLoggedIn = true;
+        }
+      });
+  } catch (error) {
+    isLoggedIn = false;
   }
 
   if (isAuthRoute) {
@@ -29,20 +44,9 @@ export default auth((req) => {
   }
 
   if (!isLoggedIn && !isPublicRoute) {
-    let callbackUrl = nextUrl.pathname;
-    if (nextUrl.search) {
-      callbackUrl += nextUrl.search;
-    }
-
-    const encodedCallbackUrl = encodeURIComponent(callbackUrl);
-
-    return Response.redirect(
-      new URL(`/auth/login?callbackUrl=${encodedCallbackUrl}`, nextUrl),
-    );
+    return Response.redirect(new URL(`/auth/login`, nextUrl));
   }
-
-  return null;
-});
+}
 
 // Optionally, don't invoke Middleware on some paths
 export const config = {
