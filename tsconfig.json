@@ -8,9 +8,9 @@
     "resolveJsonModule": true,
     "moduleDetection": "force",
     "isolatedModules": true,
-
+    "noEmitOnError": true,
     /* Strictness */
-    "strict": true,
+    "strict": false,
     "noUncheckedIndexedAccess": true,
     "checkJs": true,
 

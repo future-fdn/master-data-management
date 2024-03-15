@@ -1,0 +1,65 @@
+.overallcontainer {
+    margin-top: 50px;
+    display: flex;
+    justify-content: space-evenly;
+  }
+
+
+
+.gridcontainer {
+    margin-right:  100px;
+    display:grid;
+    grid-template-columns: 1fr 1fr ;
+    grid-template-rows: 1fr 1fr;
+    gap: 16px;
+}
+
+.donutcontainer{
+    display: inline-block;
+    margin: 0 auto;
+}
+
+.stattextcomtainer{
+    margin-right: 10px;
+    text-align: left;
+}
+
+.griditem {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-weight: bold;
+    font-size: 24px;
+    padding: 16px;
+    border: 1px solid black;
+    text-align: center;
+    border-radius: 25px;
+    box-shadow: 1px 2px gray;
+
+  }
+
+  .h1 {
+    font-size: 1rem;
+    color: black;
+    margin-top: 20px;
+    margin-bottom: 20px;
+    font-weight: bold;
+    margin-left: 150px;
+}
+
+.dataTable {
+    width: 88%;
+    border-collapse: collapse;
+    margin-left: 225px;
+}
+
+.dataTable th,
+.data-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+}
+
+.dataTable th {
+    background-color: #f2f2f2;
+}

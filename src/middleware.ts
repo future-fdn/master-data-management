@@ -1,8 +1,10 @@
 import * as jose from "jose";
 import { NextRequest } from "next/server";
+import { isAdmin } from "./actions/cookies";
 import { env } from "./env";
 import {
   DEFAULT_LOGIN_REDIRECT,
+  adminRoutes,
   apiPrefix,
   authRoutes,
   publicRoutes,
@@ -18,12 +20,14 @@ export async function middleware(req: NextRequest) {
   const isApiAuthRoute = nextUrl.pathname.startsWith(apiPrefix);
   const isPublicRoute = publicRoutes.includes(nextUrl.pathname);
   const isAuthRoute = authRoutes.includes(nextUrl.pathname);
+  const isAdminRoute = adminRoutes.includes(nextUrl.pathname);
 
   if (isApiAuthRoute) {
     return null;
   }
 
   const cookie = req.cookies.get("token");
+
   try {
     await jose
       .jwtVerify(cookie?.value ?? "", jwtConfig.secret)
@@ -34,6 +38,10 @@ export async function middleware(req: NextRequest) {
       });
   } catch (error) {
     isLoggedIn = false;
+  }
+
+  if (!(await isAdmin()) && isAdminRoute) {
+    return Response.redirect(new URL(DEFAULT_LOGIN_REDIRECT, nextUrl));
   }
 
   if (isAuthRoute) {

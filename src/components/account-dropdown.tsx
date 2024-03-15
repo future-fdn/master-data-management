@@ -1,7 +1,11 @@
 "use client";
+import axios from "axios";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import user from "public/user.svg";
+import { useEffect, useState } from "react";
+import { getToken } from "../actions/cookies";
+import { env } from "../env";
 import { deleteUserCookie } from "../server/cookies";
 import { Button } from "./ui/button";
 import {
@@ -26,13 +30,29 @@ import { Label } from "./ui/label";
 export default function Account() {
   const router = useRouter();
 
+  const [username, setUsername] = useState(false);
+
+  useEffect(() => {
+    async function getUsername() {
+      const token = await getToken();
+      const data = await axios.get(env.NEXT_PUBLIC_API + "/users/me", {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      });
+      setUsername(data.data.name);
+    }
+
+    getUsername();
+  }, []);
+
   return (
     <Dialog>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant={null}>
             <Image src={user} alt="User" width={24} height={24} />
-            <p className="font-normal">User</p>
+            <p className="pl-1 font-normal">{username}</p>
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-52" align="end">

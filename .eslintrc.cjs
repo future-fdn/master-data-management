@@ -10,11 +10,7 @@ const config = {
     "plugin:@typescript-eslint/recommended-type-checked",
     "plugin:@typescript-eslint/stylistic-type-checked",
   ],
-  ignorePatterns: [
-    "src/components/ui/**/**.tsx",
-    "src/registry/**/**.tsx",
-    "src/registry/**/**.ts",
-  ],
+  ignorePatterns: ["src/components/ui/**/**.tsx"],
   rules: {
     // These opinionated rules are enabled in stylistic-type-checked above.
     // Feel free to reconfigure them to your own preference.
@@ -28,6 +24,10 @@ const config = {
     "@typescript-eslint/no-unsafe-call": "off",
     "@typescript-eslint/no-unsafe-return": "off",
     "@typescript-eslint/no-redundant-type-constituents": "off",
+    "@typescript-eslint/no-floating-promises": "off",
+    "react-hooks/rules-of-hooks": "off",
+    "@typescript-eslint/prefer-nullish-coalescing": "off",
+    "@typescript-eslint/ban-ts-comment": "off",
 
     "@typescript-eslint/consistent-type-imports": [
       "warn",

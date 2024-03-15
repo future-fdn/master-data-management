@@ -1,28 +1,29 @@
-import { promises as fs } from "fs";
-import path from "path";
-
-import { DataTable } from "@/components/data-table/data-table";
-import { taskSchema } from "@/data/schema";
+import axios from "axios";
 import { z } from "zod";
+import { columns } from "../../components/file-table/columns";
+import { FileTable } from "../../components/file-table/data-table";
+import OverallState from "../../components/visualize/overallstate";
+import { fileSchema } from "../../data/files/schema";
+import { env } from "../../env";
 
-import { columns } from "@/components/ui/columns";
+async function getFiles() {
+  const data = await axios
+    .get(env.NEXT_PUBLIC_API + "/files/query")
+    .then((response) => response.data)
+    .catch((error) => {
+      console.log(error);
+    });
 
-async function getTasks() {
-  const data = await fs.readFile(
-    path.join(process.cwd(), "src/data/tasks.json"),
-  );
-
-  const tasks = JSON.parse(data.toString());
-
-  return z.array(taskSchema).parse(tasks);
+  return z.array(fileSchema).parse(data.files);
 }
 
-export default async function HomePage() {
-  const tasks = await getTasks();
+export default async function dataquality() {
+  const files = await getFiles();
   return (
     <div className="m-14">
-      <h1 className="mb-11 text-2xl font-bold">My Files</h1>
-      <DataTable data={tasks} columns={columns} />
+      <h1 className="mb-11 text-2xl font-bold">Overall Data Quality</h1>
+      <OverallState />
+      <FileTable data={files} columns={columns} front={true} />
     </div>
   );
 }

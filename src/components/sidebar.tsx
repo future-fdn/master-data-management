@@ -1,5 +1,8 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import dataquality from "public/data_quality.svg";
 import files from "public/file.svg";
 import master from "public/master.svg";
@@ -7,17 +10,35 @@ import mdm from "public/mdm.svg";
 import my_files from "public/my_file.svg";
 import tasks from "public/tasks.svg";
 import users from "public/users.svg";
+import { useEffect, useState } from "react";
+import { isAdmin } from "../actions/cookies";
+import { cn } from "../lib/utils";
 
 export default function Sidebar() {
+  const pathname = usePathname();
+  const [admin, setAdmin] = useState(false);
+
+  useEffect(() => {
+    async function getAdmin() {
+      const response = await isAdmin();
+      setAdmin(response);
+    }
+
+    getAdmin();
+  }, []);
+
   return (
-    <aside className="bg-nav group fixed z-10 h-screen w-14 items-center overflow-hidden transition-transform duration-500 hover:w-48">
+    <aside className="group fixed z-10 h-screen w-14 items-center overflow-hidden bg-nav transition-all duration-500 hover:w-48">
       <Link href="/">
         <Image src={mdm} alt="MDM" className="w-14 px-2.5 py-5" />
       </Link>
       <div className="mx-2.5 mt-28 space-y-2.5 text-center group-hover:mx-5">
         <Link
           href="/"
-          className="flex items-center gap-2 rounded bg-primary p-1.5"
+          className={cn(
+            "flex items-center gap-2 rounded p-1.5 transition-colors hover:bg-primary",
+            pathname == "/" ? "bg-primary" : "",
+          )}
         >
           <Image
             src={dataquality}
@@ -32,7 +53,10 @@ export default function Sidebar() {
         </Link>
         <Link
           href="/files"
-          className="flex items-center gap-2 rounded bg-primary p-1.5"
+          className={cn(
+            "flex items-center gap-2 rounded p-1.5 transition-colors hover:bg-primary",
+            pathname == "/files" ? "bg-primary" : "",
+          )}
         >
           <Image
             src={my_files}
@@ -45,54 +69,70 @@ export default function Sidebar() {
             My Files
           </p>
         </Link>
-        <Link
-          href="/master"
-          className="flex items-center gap-2 rounded bg-primary p-1.5"
-        >
-          <Image
-            src={master}
-            alt="Master Data"
-            width={56}
-            height={56}
-            className="group-hover:w-6"
-          />
-          <p className="hidden font-medium text-white group-hover:block">
-            Master Data
-          </p>
-        </Link>
-        <Link
-          href="/manage_files"
-          className="flex items-center gap-2 rounded bg-primary p-1.5"
-        >
-          <Image
-            src={files}
-            alt="Manage Files"
-            width={56}
-            height={56}
-            className="group-hover:w-6"
-          />
-          <p className="hidden font-medium text-white group-hover:block">
-            Manage Files
-          </p>
-        </Link>
-        <Link
-          href="/users"
-          className="flex items-center gap-2 rounded bg-primary p-1.5"
-        >
-          <Image
-            src={users}
-            alt="Users"
-            width={56}
-            height={56}
-            className="group-hover:w-6"
-          />
-          <p className="hidden font-medium text-white group-hover:block">
-            Users
-          </p>
-        </Link>
+        {admin && (
+          <>
+            <Link
+              href="/master"
+              className={cn(
+                "flex items-center gap-2 rounded p-1.5 transition-colors hover:bg-primary",
+                pathname == "/master" ? "bg-primary" : "",
+              )}
+            >
+              <Image
+                src={master}
+                alt="Master Data"
+                width={56}
+                height={56}
+                className="group-hover:w-6"
+              />
+              <p className="hidden font-medium text-white group-hover:block">
+                Master Data
+              </p>
+            </Link>
+            <Link
+              href="/manage_files"
+              className={cn(
+                "flex items-center gap-2 rounded p-1.5 transition-colors hover:bg-primary",
+                pathname == "/manage_files" ? "bg-primary" : "",
+              )}
+            >
+              <Image
+                src={files}
+                alt="Manage Files"
+                width={56}
+                height={56}
+                className="group-hover:w-6"
+              />
+              <p className="hidden font-medium text-white group-hover:block">
+                Manage Files
+              </p>
+            </Link>
+            <Link
+              href="/users"
+              className={cn(
+                "flex items-center gap-2 rounded p-1.5 transition-colors hover:bg-primary",
+                pathname == "/users" ? "bg-primary" : "",
+              )}
+            >
+              <Image
+                src={users}
+                alt="Users"
+                width={56}
+                height={56}
+                className="group-hover:w-6"
+              />
+              <p className="hidden font-medium text-white group-hover:block">
+                Users
+              </p>
+            </Link>
+          </>
+        )}
         <Link
           href="/tasks"
-          className="flex items-center gap-2 rounded bg-primary p-1.5"
+          className={cn(
+            "flex items-center gap-2 rounded p-1.5 transition-colors hover:bg-primary",
+            pathname == "/tasks" ? "bg-primary" : "",
+          )}
         >
           <Image
             src={tasks}
