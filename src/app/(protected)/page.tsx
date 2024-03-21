@@ -1,6 +1,7 @@
 "use client";
 
 import axios from "axios";
+import { useQuery } from "react-query";
 import { z } from "zod";
 import { columns } from "../../components/file-table/columns";
 import { FileTable } from "../../components/file-table/data-table";
@@ -19,13 +20,14 @@ async function getFiles() {
   return z.array(fileSchema).parse(data.files);
 }
 
-export default async function dataquality() {
-  const files = await getFiles();
+export default function dataquality() {
+  const files = useQuery("files", getFiles);
+
   return (
     <div className="m-14">
       <h1 className="mb-11 text-2xl font-bold">Overall Data Quality</h1>
       <OverallState />
-      <FileTable data={files} columns={columns} front={true} />
+      <FileTable data={files.data} columns={columns} front={true} />
     </div>
   );
 }
