@@ -1,3 +1,5 @@
+"use client";
+
 import axios from "axios";
 import { z } from "zod";
 import { columns } from "../../components/file-table/columns";

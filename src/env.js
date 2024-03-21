@@ -7,22 +7,11 @@ export const env = createEnv({
    * isn't built with invalid env vars.
    */
   server: {
-    DATABASE_URL: z
-      .string()
-      .url()
-      .refine(
-        (str) => !str.includes("YOUR_MYSQL_URL_HERE"),
-        "You forgot to change the default URL",
-      ),
     NODE_ENV: z
       .enum(["development", "test", "production"])
       .default("development"),
-    AUTH_SECRET:
-      process.env.NODE_ENV === "production"
-        ? z.string()
-        : z.string().optional(),
     COOKIE_SECURE: z.coerce.boolean().default(true),
-    SECRET: z.string()
+    SECRET: z.string(),
   },
 
   /**
@@ -40,9 +29,7 @@ export const env = createEnv({
    * middlewares) or client-side so we need to destruct manually.
    */
   runtimeEnv: {
-    DATABASE_URL: process.env.DATABASE_URL,
     NODE_ENV: process.env.NODE_ENV,
-    AUTH_SECRET: process.env.AUTH_SECRET,
     NEXT_PUBLIC_API: process.env.NEXT_PUBLIC_API,
     COOKIE_SECURE: process.env.COOKIE_SECURE,
     SECRET: process.env.SECRET,
