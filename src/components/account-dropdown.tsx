@@ -1,13 +1,6 @@
 "use client";
-import axios from "axios";
-import Image from "next/image";
-import { useRouter } from "next/navigation";
-import user from "public/user.svg";
-import { useEffect, useState } from "react";
-import { getToken } from "../actions/cookies";
-import { env } from "../env";
-import { deleteUserCookie } from "../server/cookies";
-import { Button } from "./ui/button";
+import { getToken } from "@/actions/cookies";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
@@ -16,16 +9,23 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "./ui/dialog";
+} from "@/components/ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "./ui/dropdown-menu";
-import { Input } from "./ui/input";
-import { Label } from "./ui/label";
+} from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { env } from "@/env";
+import { deleteUserCookie } from "@/server/cookies";
+import axios from "axios";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import user from "public/user.svg";
+import { useEffect, useState } from "react";
 
 export default function Account() {
   const router = useRouter();

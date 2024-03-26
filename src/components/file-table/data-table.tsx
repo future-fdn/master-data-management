@@ -27,8 +27,8 @@ import {
 
 import { DataTablePagination } from "@/components/file-table/data-table-pagination";
 import { DataTableToolbar } from "@/components/file-table/data-table-toolbar";
-import { cn } from "../../lib/utils";
-import { ScrollArea } from "../ui/scroll-area";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import { cn } from "@/lib/utils";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];

@@ -2,6 +2,7 @@
 
 import { env } from "@/env.js";
 import { cookies } from "next/headers";
+
 export async function setUserCookie(jwt: string) {
   cookies().set("token", jwt, {
     httpOnly: env.COOKIE_SECURE,

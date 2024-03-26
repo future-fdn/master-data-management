@@ -1,13 +1,13 @@
 "use client";
 
+import { columns } from "@/components/file-table/columns";
+import { FileTable } from "@/components/file-table/data-table";
+import OverallState from "@/components/visualize/overallstate";
+import { fileSchema } from "@/data/files/schema";
+import { env } from "@/env";
 import axios from "axios";
-import { useQuery } from "react-query";
+import { useEffect, useState } from "react";
 import { z } from "zod";
-import { columns } from "../../components/file-table/columns";
-import { FileTable } from "../../components/file-table/data-table";
-import OverallState from "../../components/visualize/overallstate";
-import { fileSchema } from "../../data/files/schema";
-import { env } from "../../env";
 
 async function getFiles() {
   const data = await axios
@@ -21,13 +21,23 @@ async function getFiles() {
 }
 
 export default function dataquality() {
-  const files = useQuery("files", getFiles);
+  type FileState = z.infer<typeof fileSchema>;
+  const [files, setFiles] = useState<FileState[]>([]);
+
+  useEffect(() => {
+    async function fetchFiles() {
+      const data = await getFiles();
+      setFiles(data);
+    }
+
+    fetchFiles();
+  }, []);
 
   return (
     <div className="m-14">
       <h1 className="mb-11 text-2xl font-bold">Overall Data Quality</h1>
       <OverallState />
-      <FileTable data={files.data} columns={columns} front={true} />
+      <FileTable data={files} columns={columns} front={true} />
     </div>
   );
 }

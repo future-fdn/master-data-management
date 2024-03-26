@@ -3,12 +3,12 @@
 import { userSchema } from "@/data/users/schema";
 import { z } from "zod";
 
+import { getToken } from "@/actions/cookies";
 import { columns } from "@/components/user-table/columns";
 import { FileTable } from "@/components/user-table/data-table";
 import { env } from "@/env";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { getToken } from "../../../actions/cookies";
 
 async function getFiles() {
   const token = await getToken();

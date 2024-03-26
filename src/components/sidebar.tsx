@@ -1,5 +1,7 @@
 "use client";
 
+import { isAdmin } from "@/actions/cookies";
+import { cn } from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -11,8 +13,6 @@ import my_files from "public/my_file.svg";
 import tasks from "public/tasks.svg";
 import users from "public/users.svg";
 import { useEffect, useState } from "react";
-import { isAdmin } from "../actions/cookies";
-import { cn } from "../lib/utils";
 
 export default function Sidebar() {
   const pathname = usePathname();

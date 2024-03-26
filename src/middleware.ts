@@ -1,14 +1,14 @@
-import * as jose from "jose";
-import { NextRequest } from "next/server";
-import { isAdmin } from "./actions/cookies";
-import { env } from "./env";
+import { isAdmin } from "@/actions/cookies";
+import { env } from "@/env";
 import {
   DEFAULT_LOGIN_REDIRECT,
   adminRoutes,
   apiPrefix,
   authRoutes,
   publicRoutes,
-} from "./server/routes";
+} from "@/server/routes";
+import * as jose from "jose";
+import { NextRequest } from "next/server";
 
 const jwtConfig = {
   secret: new TextEncoder().encode(env.SECRET),

@@ -1,8 +1,8 @@
 "use server";
 
+import { env } from "@/env";
 import * as jose from "jose";
 import { cookies } from "next/headers";
-import { env } from "../env";
 
 const jwtConfig = {
   secret: new TextEncoder().encode(env.SECRET),

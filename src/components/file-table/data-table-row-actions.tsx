@@ -3,21 +3,8 @@
 import { DotsHorizontalIcon } from "@radix-ui/react-icons";
 import { Row } from "@tanstack/react-table";
 
+import { MultiDialog } from "@/components/multi-dialog";
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuShortcut,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import axios from "axios";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { toast } from "sonner";
-import { env } from "../../env";
-import { MultiDialog } from "../multi-dialog";
 import {
   Dialog,
   DialogClose,
@@ -27,8 +14,21 @@ import {
   DialogHeader,
   DialogPortal,
   DialogTitle,
-} from "../ui/dialog";
-import DistanceChart from "../visualize/distancechart";
+} from "@/components/ui/dialog";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuShortcut,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import DistanceChart from "@/components/visualize/distancechart";
+import { env } from "@/env";
+import axios from "axios";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 interface DataTableRowActionsProps<TData> {
   row: Row<TData>;

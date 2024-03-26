@@ -1,5 +1,5 @@
-import QualityChart from "./qualitychart";
-import QualityStat from "./qualitystat";
+import QualityChart from "@/components/visualize/qualitychart";
+import QualityStat from "@/components/visualize/qualitystat";
 
 export default function OverallState() {
   return (

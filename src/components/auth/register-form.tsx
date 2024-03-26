@@ -1,5 +1,6 @@
 "use client";
 
+import { CardWrapper } from "@/components/auth/card-wrapper";
 import { FormError } from "@/components/form-error";
 import { FormSuccess } from "@/components/form-success";
 import { Button } from "@/components/ui/button";
@@ -19,7 +20,6 @@ import axios from "axios";
 import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import { CardWrapper } from "./card-wrapper";
 
 export const RegisterForm = () => {
   const [error, setError] = useState<string | undefined>("");

@@ -4,10 +4,10 @@ import { fileSchema } from "@/data/files/schema";
 import { z } from "zod";
 
 import { columns } from "@/components/file-table/columns";
+import { FileTable } from "@/components/file-table/data-table";
+import { env } from "@/env";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { FileTable } from "../../../components/file-table/data-table";
-import { env } from "../../../env";
 
 async function getFiles() {
   const data = await axios

@@ -1,7 +1,7 @@
+import { env } from "@/env";
 import jose from "jose";
 import { cookies } from "next/headers";
 import { cache } from "react";
-import { env } from "../env";
 
 const jwtConfig = {
   secret: new TextEncoder().encode(env.SECRET),

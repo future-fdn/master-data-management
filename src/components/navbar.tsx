@@ -1,6 +1,6 @@
 "use client";
 
-import Account from "./account-dropdown";
+import Account from "@/components/account-dropdown";
 
 export default function NavBar() {
   return (

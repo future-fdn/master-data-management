@@ -1,7 +1,7 @@
 "use client";
+import { getQualityChartData } from "@/components/visualize/alldata";
 import * as d3 from "d3";
 import { useEffect, useRef, useState } from "react";
-import { getQualityChartData } from "./alldata";
 
 export default function QualityChart() {
   const [data, setData] = useState(getQualityChartData());

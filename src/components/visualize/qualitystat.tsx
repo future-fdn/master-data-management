@@ -1,8 +1,8 @@
 "use client";
+import DonutChart from "@/components/visualize/donutchart";
+import { env } from "@/env";
 import axios from "axios";
 import { useEffect, useState } from "react";
-import { env } from "../../env";
-import DonutChart from "./donutchart";
 
 export default function QualityStat() {
   const [numberOfRecord, setNumberOfRecord] = useState(0);
