@@ -3,15 +3,19 @@
 import { fileSchema } from "@/data/files/schema";
 import { z } from "zod";
 
-import { columns } from "@/components/file-table/columns";
-import { FileTable } from "@/components/file-table/data-table";
+import { columns } from "@/data/files/columns";
 import { env } from "@/env";
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { getToken } from "../../../actions/cookies";
+import { FileTable } from "../../../components/ui/file-table";
 
 async function getFiles() {
+  const token = await getToken();
   const data = await axios
-    .get(env.NEXT_PUBLIC_API + "/files/master")
+    .get(env.NEXT_PUBLIC_API + "/files/master", {
+      headers: { Authorization: "Bearer " + token },
+    })
     .then((response) => response.data)
     .catch((error) => {
       console.log(error);
@@ -33,7 +37,7 @@ export default function Master() {
   return (
     <div className="m-14">
       <h1 className="mb-11 text-2xl font-bold">Master Files</h1>
-      <FileTable data={files} columns={columns} front={false} />
+      <FileTable data={files} columns={columns} />
     </div>
   );
 }

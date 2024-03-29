@@ -2,8 +2,8 @@
 import { fileSchema } from "@/data/files/schema";
 import { z } from "zod";
 
-import { columns } from "@/components/file-table/columns";
-import { FileTable } from "@/components/file-table/data-table";
+import { FileTable } from "@/components/ui/file-table";
+import { columns } from "@/data/files/columns";
 import { env } from "@/env";
 import axios from "axios";
 import { useEffect, useState } from "react";
@@ -32,7 +32,7 @@ export default function HomePage() {
   return (
     <div className="m-14">
       <h1 className="mb-11 text-2xl font-bold">Manage Files</h1>
-      <FileTable data={files} columns={columns} front={false} />
+      <FileTable data={files} columns={columns} />
     </div>
   );
 }

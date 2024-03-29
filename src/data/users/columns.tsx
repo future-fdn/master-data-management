@@ -5,8 +5,8 @@ import { ColumnDef } from "@tanstack/react-table";
 import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 
-import { DataTableColumnHeader } from "@/components/user-table/data-table-column-header";
-import { DataTableRowActions } from "@/components/user-table/data-table-row-actions";
+import { DataTableColumnHeader } from "@/components/ui/data-table-column-header";
+import { DataTableRowActions } from "@/components/ui/user-row-actions";
 import { labels } from "@/data/users/data";
 import { User } from "@/data/users/schema";
 

@@ -2,12 +2,11 @@
 
 import { ColumnDef } from "@tanstack/react-table";
 
-import { Badge } from "@/components/ui/badge";
 import { Checkbox } from "@/components/ui/checkbox";
 
-import { DataTableColumnHeader } from "@/components/file-table/data-table-column-header";
-import { DataTableRowActions } from "@/components/file-table/data-table-row-actions";
-import { labels } from "@/data/files/data";
+import { DataTableColumnHeader } from "@/components/ui/data-table-column-header";
+import { DataTableRowActions } from "@/components/ui/file-row-actions";
+import { types } from "@/data/files/data";
 import { File } from "@/data/files/schema";
 
 export const columns: ColumnDef<File>[] = [
@@ -46,7 +45,7 @@ export const columns: ColumnDef<File>[] = [
       />
     ),
     cell: ({ row }) => (
-      <div className="w-[150px] pl-2">{row.getValue("file_name")}</div>
+      <div className="w-[200px] truncate pl-2">{row.getValue("file_name")}</div>
     ),
     enableSorting: true,
     enableHiding: false,
@@ -57,18 +56,44 @@ export const columns: ColumnDef<File>[] = [
       <DataTableColumnHeader column={column} title="Description" />
     ),
     cell: ({ row }) => {
-      const label = labels.find((label) => label.value === row.original.type);
-
       return (
         <div className="flex space-x-2">
-          {label && <Badge variant="outline">{label.label}</Badge>}
           <span className="min-w-[100px] max-w-[500px] truncate font-medium">
-            {row.getValue("description")}
+            {row.getValue("description") === " "
+              ? "No description"
+              : row.getValue("description")}
           </span>
         </div>
       );
     },
     enableSorting: false,
+  },
+  {
+    accessorKey: "type",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Type" />
+    ),
+    cell: ({ row }) => {
+      const file_type = types.find(
+        (type) => type.value === row.getValue("type"),
+      );
+
+      if (!file_type) {
+        return null;
+      }
+
+      return (
+        <div className="flex w-[100px] items-center">
+          {file_type.icon && (
+            <file_type.icon className="mr-2 h-4 w-4 text-muted-foreground" />
+          )}
+          <span>{file_type.label}</span>
+        </div>
+      );
+    },
+    filterFn: (row, id, value) => {
+      return value.includes(row.getValue(id));
+    },
   },
   {
     accessorKey: "modified",
@@ -77,7 +102,7 @@ export const columns: ColumnDef<File>[] = [
     ),
     cell: ({ row }) => {
       return (
-        <div className="flex w-[120px] items-center">
+        <div className="flex w-[120px] items-center truncate">
           {row.getValue<Date>("modified").toDateString()}
         </div>
       );

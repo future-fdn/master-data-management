@@ -11,7 +11,7 @@ const ProtectedLayout = ({ children }: ProtectedLayoutProps) => {
       <NavBar />
       <Sidebar />
 
-      <main className="ml-14 min-h-full w-full">{children}</main>
+      <main className="ml-14 mt-14 h-screen w-full">{children}</main>
       <Toaster />
     </div>
   );

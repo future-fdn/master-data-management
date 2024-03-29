@@ -65,7 +65,7 @@ export default function Account() {
           <DropdownMenuItem
             onClick={async () => {
               await deleteUserCookie();
-              router.refresh();
+              window.location.href = "/auth/login";
             }}
             className="text-sm font-normal"
           >

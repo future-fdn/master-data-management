@@ -75,6 +75,12 @@ export const RegisterForm = () => {
       backButtonLabel="Already have an account?"
       backButtonHref="/auth/login"
     >
+      <div className="my-5 flex w-full flex-wrap items-center justify-center">
+        <h1 className="text-2xl font-bold">Register</h1>
+        <p className="font-regular text-sm text-gray-500">
+          Register to create an account for the platform.
+        </p>
+      </div>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           <div>

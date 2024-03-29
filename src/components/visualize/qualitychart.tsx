@@ -11,8 +11,8 @@ export default function QualityChart() {
     if (data.length === 0) return; // Do nothing if data is not yet loaded
 
     // setting up svg
-    const w = 400;
-    const h = 200;
+    const w = 600;
+    const h = 300;
     const svg = d3
       .select(svgRef.current)
       .attr("width", w)

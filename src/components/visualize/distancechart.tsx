@@ -7,10 +7,10 @@ const DistanceChart = () => {
 
   // Fake data for links
   const fakeLinks = [
-    { source: "กรุงเทพมหานคร", target: "เชียงใหม่", distance: 5, partial: 7 },
-    { source: "เชียงใหม่", target: "เชียงราย", distance: 3, partial: 5 },
-    { source: "เชียงราย", target: "กรุงเทพมหานคร", distance: 7, partial: 10 },
-    { source: "ขอนแก่น", target: "อุบลราชธานี", distance: 10, partial: 3 },
+    { source: "กรุงเทพมหานคร", target: "เชียงใหม่", distance: 50, partial: 70 },
+    { source: "เชียงใหม่", target: "เชียงราย", distance: 0, partial: 50 },
+    { source: "เชียงราย", target: "กรุงเทพมหานคร", distance: 70, partial: 100 },
+    { source: "ขอนแก่น", target: "อุบลราชธานี", distance: 100, partial: 30 },
     // Add more fake links as needed
   ];
 
@@ -29,8 +29,8 @@ const DistanceChart = () => {
   const nodes = fakeNodes.map((d) => ({ ...d }));
 
   // Specify the dimensions of the chart.
-  const width = 464;
-  const height = 340;
+  const width = 928;
+  const height = 680;
 
   // Specify the color scale.
   const color = d3.scaleOrdinal(d3.schemeCategory10);
@@ -38,14 +38,15 @@ const DistanceChart = () => {
   useEffect(() => {
     // Create a simulation with several forces.
     const simulation = d3
-      // @ts-expect-error
       .forceSimulation(nodes)
       .force(
         "link",
-        // @ts-expect-error
-        d3.forceLink(links).id((d) => d.id),
+        d3
+          .forceLink(links)
+          .id((d) => d.id)
+          .distance((d) => d.distance + 100),
       )
-      .force("charge", d3.forceManyBody())
+      .force("charge", d3.forceManyBody().strength(-1000))
       .force("x", d3.forceX())
       .force("y", d3.forceY());
 
@@ -69,30 +70,9 @@ const DistanceChart = () => {
       .selectAll("line")
       .data(links)
       .join("line")
-      .attr("stroke-width", 3)
+      .attr("stroke-width", 5)
       .on("mouseover", handleMouseOver)
       .on("mouseout", handleMouseOut);
-
-    const node = svg
-      .append("g")
-      .attr("stroke", "#fff")
-      .attr("stroke-width", 1.5)
-      .selectAll("circle")
-      .data(nodes)
-      .join("circle")
-      .attr("r", 5)
-      // @ts-expect-error
-      .attr("fill", (d) => color(d.group));
-
-    // Add a node drag behavior.
-    node.call(
-      // @ts-expect-error
-      d3
-        .drag()
-        .on("start", dragstarted)
-        .on("drag", dragged)
-        .on("end", dragended),
-    );
 
     // Add labels to each node
     const nodeLabels = svg
@@ -100,13 +80,32 @@ const DistanceChart = () => {
       .data(nodes)
       .join("text")
       .text((d) => d.id)
-      .attr("fill", "black");
+      .attr("fill", "black")
+      .attr("text-anchor", "middle")
+      .attr("dominant-baseline", "middle");
 
     // Add a label drag behavior.
     nodeLabels.call(
-      // @ts-expect-error
       d3
+        .drag()
+        .on("start", dragstarted)
+        .on("drag", dragged)
+        .on("end", dragended),
+    );
 
+    const node = svg
+      .append("g")
+      .attr("stroke-width", 5)
+      .selectAll("circle")
+      .data(nodes)
+      .join("circle")
+      .attr("r", 20)
+      .attr("stroke", (d) => color(d.group))
+      .attr("fill", (d) => d3.interpolateRgb(color(d.group), "white")(0.6));
+
+    // Add a node drag behavior.
+    node.call(
+      d3
         .drag()
         .on("start", dragstarted)
         .on("drag", dragged)
@@ -116,25 +115,29 @@ const DistanceChart = () => {
     // Set the position attributes of links and nodes each time the simulation ticks.
     simulation.on("tick", () => {
       link
-        // @ts-expect-error
         .attr("x1", (d) => d.source.x)
-        // @ts-expect-error
         .attr("y1", (d) => d.source.y)
-        // @ts-expect-error
         .attr("x2", (d) => d.target.x)
-        // @ts-expect-error
         .attr("y2", (d) => d.target.y);
-      // @ts-expect-error
 
       node.attr("cx", (d) => d.x).attr("cy", (d) => d.y);
 
-      // @ts-expect-error
-      nodeLabels.attr("transform", (d) => `translate(${d.x + 30},${d.y})`);
+      nodeLabels.attr("x", (d) => d.x).attr("y", (d) => d.y + 35);
     });
+
+    nodeLabels.raise();
 
     // Handle mouse over event for links
     function handleMouseOver(event, d) {
       const tooltip = svg.append("g").attr("class", "tooltip");
+      const mouseX =
+        event.clientX -
+        (svg.node().getBoundingClientRect().left +
+          svg.node().getBoundingClientRect().width / 2);
+      const mouseY =
+        event.clientY -
+        (svg.node().getBoundingClientRect().top +
+          svg.node().getBoundingClientRect().height / 2);
 
       const text = tooltip
         .append("text")
@@ -155,9 +158,11 @@ const DistanceChart = () => {
 
       tooltip
         .append("text")
-        .text(`Partial: ${d.partial}, Distance: ${d.distance}`)
+        .text(`Distance: ${d.distance}, Partial: ${d.partial}`)
         .attr("x", 5)
         .attr("y", 20);
+
+      tooltip.attr("transform", `translate(${mouseX + 10}, ${mouseY + 10})`);
     }
 
     // Handle mouse out event for links

@@ -25,18 +25,21 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { DataTablePagination } from "@/components/user-table/data-table-pagination";
-import { DataTableToolbar } from "@/components/user-table/data-table-toolbar";
+import { cn } from "../../lib/utils";
+import { DataTablePagination } from "./data-table-pagination";
+import { FileTableToolbar } from "./file-table-toolbar";
+import { ScrollArea } from "./scroll-area";
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
+  fullTable?: boolean;
 }
 
 export function FileTable<TData, TValue>({
   columns,
   data,
+  fullTable = true,
 }: DataTableProps<TData, TValue>) {
   const [rowSelection, setRowSelection] = React.useState({});
   const [columnVisibility, setColumnVisibility] =
@@ -70,10 +73,10 @@ export function FileTable<TData, TValue>({
 
   return (
     <div className="space-y-4">
-      <DataTableToolbar table={table} />
+      {fullTable && <FileTableToolbar table={table} />}
       <div className="rounded-md border">
-        <ScrollArea className="max-h-[55vh]">
-          <Table>
+        <ScrollArea className={cn(fullTable ? "h-[460px]" : "h-80")}>
+          <Table className="relative">
             <TableHeader>
               {table.getHeaderGroups().map((headerGroup) => (
                 <TableRow key={headerGroup.id}>
@@ -123,8 +126,7 @@ export function FileTable<TData, TValue>({
           </Table>
         </ScrollArea>
       </div>
-
-      <DataTablePagination table={table} />
+      {fullTable && <DataTablePagination table={table} />}
     </div>
   );
 }

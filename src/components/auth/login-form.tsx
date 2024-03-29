@@ -17,7 +17,8 @@ import { LoginSchema } from "@/schemas";
 import { setUserCookie } from "@/server/cookies";
 import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
-import { useRouter } from "next/navigation";
+import Image from "next/image";
+import mdm from "public/mdm.svg";
 import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
@@ -26,8 +27,6 @@ export const LoginForm = () => {
   const [error, setError] = useState<string | undefined>("");
   const [success, setSuccess] = useState<string | undefined>("");
   const [isPending, startTransition] = useTransition();
-
-  const router = useRouter();
 
   const form = useForm<z.infer<typeof LoginSchema>>({
     resolver: zodResolver(LoginSchema),
@@ -59,8 +58,7 @@ export const LoginForm = () => {
           .then(async (response) => {
             setSuccess("Logged in successfully!");
             await setUserCookie(response.data.access_token);
-            router.push("/");
-            router.refresh();
+            window.location.href = "/";
           })
           .catch((error) => {
             setError(error?.response?.data?.detail);
@@ -74,6 +72,20 @@ export const LoginForm = () => {
       backButtonLabel="Don't have an account?"
       backButtonHref="/auth/register"
     >
+      <div className="my-5 flex w-full flex-wrap items-center justify-center">
+        <Image
+          src={mdm}
+          alt="MDM"
+          width={50}
+          height={50}
+          className="my-5 invert"
+        />
+
+        <h1 className="w-full text-center text-2xl font-bold">Welcome back!</h1>
+        <p className="text-center text-sm text-gray-500">
+          Please login to get started.
+        </p>
+      </div>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           <div>

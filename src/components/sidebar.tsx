@@ -90,7 +90,7 @@ export default function Sidebar() {
               </p>
             </Link>
             <Link
-              href="/manage_files"
+              href="/manage-files"
               className={cn(
                 "flex items-center gap-2 rounded p-1.5 transition-colors hover:bg-primary",
                 pathname == "/manage_files" ? "bg-primary" : "",

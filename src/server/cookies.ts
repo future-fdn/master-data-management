@@ -15,3 +15,9 @@ export async function setUserCookie(jwt: string) {
 export async function deleteUserCookie() {
   cookies().delete("token");
 }
+
+export async function getToken() {
+  const cookie = cookies().get("token");
+
+  return cookie;
+}

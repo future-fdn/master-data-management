@@ -4,13 +4,13 @@ import { userSchema } from "@/data/users/schema";
 import { z } from "zod";
 
 import { getToken } from "@/actions/cookies";
-import { columns } from "@/components/user-table/columns";
-import { FileTable } from "@/components/user-table/data-table";
+import { DataTable } from "@/components/ui/data-table";
+import { columns } from "@/data/users/columns";
 import { env } from "@/env";
 import axios from "axios";
 import { useEffect, useState } from "react";
 
-async function getFiles() {
+async function getUsers() {
   const token = await getToken();
   const data = await axios
     .get(env.NEXT_PUBLIC_API + "/users", {
@@ -27,11 +27,11 @@ async function getFiles() {
 }
 
 export default function HomePage() {
-  const [files, setFiles] = useState([]);
+  const [users, setUsers] = useState([]);
   useEffect(() => {
     async function fetchData() {
-      const files = await getFiles();
-      setFiles(files);
+      const users = await getUsers();
+      setUsers(users);
     }
     fetchData();
   }, []);
@@ -39,7 +39,7 @@ export default function HomePage() {
   return (
     <div className="m-14">
       <h1 className="mb-11 text-2xl font-bold">Users</h1>
-      <FileTable data={files} columns={columns} />
+      <DataTable data={users} columns={columns} />
     </div>
   );
 }
