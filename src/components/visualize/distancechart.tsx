@@ -38,11 +38,13 @@ const DistanceChart = () => {
   useEffect(() => {
     // Create a simulation with several forces.
     const simulation = d3
+      // @ts-expect-error
       .forceSimulation(nodes)
       .force(
         "link",
         d3
           .forceLink(links)
+          // @ts-expect-error
           .id((d) => d.id)
           .distance((d) => d.distance + 100),
       )
@@ -86,6 +88,7 @@ const DistanceChart = () => {
 
     // Add a label drag behavior.
     nodeLabels.call(
+      // @ts-expect-error
       d3
         .drag()
         .on("start", dragstarted)
@@ -100,11 +103,14 @@ const DistanceChart = () => {
       .data(nodes)
       .join("circle")
       .attr("r", 20)
+      // @ts-expect-error
       .attr("stroke", (d) => color(d.group))
+      // @ts-expect-error
       .attr("fill", (d) => d3.interpolateRgb(color(d.group), "white")(0.6));
 
     // Add a node drag behavior.
     node.call(
+      // @ts-expect-error
       d3
         .drag()
         .on("start", dragstarted)
@@ -115,13 +121,18 @@ const DistanceChart = () => {
     // Set the position attributes of links and nodes each time the simulation ticks.
     simulation.on("tick", () => {
       link
+        // @ts-expect-error
         .attr("x1", (d) => d.source.x)
+        // @ts-expect-error
         .attr("y1", (d) => d.source.y)
+        // @ts-expect-error
         .attr("x2", (d) => d.target.x)
+        // @ts-expect-error
         .attr("y2", (d) => d.target.y);
 
+      // @ts-expect-error
       node.attr("cx", (d) => d.x).attr("cy", (d) => d.y);
-
+      // @ts-expect-error
       nodeLabels.attr("x", (d) => d.x).attr("y", (d) => d.y + 35);
     });
 
