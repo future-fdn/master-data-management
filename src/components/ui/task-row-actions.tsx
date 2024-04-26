@@ -36,6 +36,8 @@ import { ScrollArea } from "./scroll-area";
 
 interface DataTableRowActionsProps<TData> {
   row: Row<TData>;
+  url: string;
+  task_id: string;
 }
 
 export const MapSchema = z.object({

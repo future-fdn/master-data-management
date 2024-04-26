@@ -11,6 +11,7 @@ export const taskSchema = z.object({
   status: z.enum(["PENDING", "IN_PROGRESS", "COMPLETED", "FAILED"]),
   started: z.coerce.date(),
   ended: z.coerce.date(),
+  url: z.string(),
 });
 
 export const tasksSchema = z.object({
