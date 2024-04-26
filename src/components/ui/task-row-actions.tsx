@@ -95,6 +95,8 @@ export async function fetchResult(task_id) {
 
 export function TaskTableRowActions<TData>({
   row,
+  url,
+  task_id,
 }: DataTableRowActionsProps<TData>) {
   const form = useForm<z.infer<typeof MapSchema>>({
     resolver: zodResolver(MapSchema),
@@ -156,7 +158,7 @@ export function TaskTableRowActions<TData>({
               </mdb.Trigger>
               <DropdownMenuSeparator />
               <Link
-                href={"#"}
+                href={url}
                 download={true}
                 rel="noopener noreferrer"
                 target="_blank"
