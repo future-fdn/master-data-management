@@ -1,12 +1,12 @@
 "use client";
 
-import { taskSchema } from "@/data/tasks/schema";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { z } from "zod";
 import { getToken } from "../../../actions/cookies";
 import { DataTable } from "../../../components/ui/data-table";
 import { columns } from "../../../data/tasks/columns";
+import { tasksSchema } from "../../../data/tasks/schema";
 import { env } from "../../../env";
 
 async function getTasks() {
@@ -22,11 +22,12 @@ async function getTasks() {
       console.log(error);
     });
 
-  return z.array(taskSchema).parse(data.tasks);
+  return tasksSchema.parse(data);
 }
 
 export default function TasksPage() {
-  const [tasks, setTasks] = useState([]);
+  type Tasks = z.infer<typeof tasksSchema>;
+  const [tasks, setTasks] = useState<Tasks>();
 
   useEffect(() => {
     async function fetchData() {
@@ -39,7 +40,11 @@ export default function TasksPage() {
   return (
     <div className="m-14">
       <h1 className="mb-11 text-2xl font-bold">Tasks</h1>
-      <DataTable data={tasks} columns={columns} />
+      <DataTable
+        data={tasks?.tasks ?? []}
+        total={tasks?.total}
+        columns={columns}
+      />
     </div>
   );
 }

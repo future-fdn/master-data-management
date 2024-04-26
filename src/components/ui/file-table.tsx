@@ -1,22 +1,6 @@
 "use client";
 
 import {
-  ColumnDef,
-  ColumnFiltersState,
-  SortingState,
-  VisibilityState,
-  flexRender,
-  getCoreRowModel,
-  getFacetedRowModel,
-  getFacetedUniqueValues,
-  getFilteredRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  useReactTable,
-} from "@tanstack/react-table";
-import * as React from "react";
-
-import {
   Table,
   TableBody,
   TableCell,
@@ -24,7 +8,26 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import {
+  ColumnDef,
+  ColumnFiltersState,
+  PaginationState,
+  SortingState,
+  VisibilityState,
+  flexRender,
+  getCoreRowModel,
+  getFacetedRowModel,
+  getFacetedUniqueValues,
+  getFilteredRowModel,
+  getSortedRowModel,
+  useReactTable,
+} from "@tanstack/react-table";
+import * as React from "react";
 
+import axios from "axios";
+import { getToken } from "../../actions/cookies";
+import { filesSchema } from "../../data/files/schema";
+import { env } from "../../env";
 import { cn } from "../../lib/utils";
 import { DataTablePagination } from "./data-table-pagination";
 import { FileTableToolbar } from "./file-table-toolbar";
@@ -33,14 +36,74 @@ import { ScrollArea } from "./scroll-area";
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
+  total: number;
+  file_type: string;
   fullTable?: boolean;
+}
+
+export async function fetchData(
+  options: {
+    pageIndex: number;
+    pageSize: number;
+  },
+  fileType,
+) {
+  const token = await getToken();
+
+  if (fileType == "QUERY") {
+    var url = env.NEXT_PUBLIC_API + "/files/query";
+  } else if (fileType == "MASTER") {
+    var url = env.NEXT_PUBLIC_API + "/files/master";
+  } else {
+    var url = env.NEXT_PUBLIC_API + "/files";
+  }
+
+  const data = await axios
+    .get(url, {
+      params: {
+        offset: options.pageSize * options.pageIndex,
+        limit: options.pageSize,
+      },
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    })
+    .then((response) => response.data)
+    .catch((error) => {
+      console.log(error);
+    });
+  const files = filesSchema.parse(data);
+
+  return {
+    rows: files.files,
+    pageCount: files.total,
+    rowCount: files.files.length,
+  };
 }
 
 export function FileTable<TData, TValue>({
   columns,
   data,
+  total,
+  file_type,
   fullTable = true,
 }: DataTableProps<TData, TValue>) {
+  const [pagination, setPagination] = React.useState<PaginationState>({
+    pageIndex: 0,
+    pageSize: 10,
+  });
+  const [files, setFiles] = React.useState(data);
+  const [fileType, setFileType] = React.useState(file_type);
+
+  React.useEffect(() => {
+    async function fetchFiles() {
+      const data = await fetchData(pagination, fileType);
+      setFiles(data.rows as Array<any>);
+    }
+
+    fetchFiles();
+  }, [pagination]);
+
   const [rowSelection, setRowSelection] = React.useState({});
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
@@ -50,14 +113,20 @@ export function FileTable<TData, TValue>({
   const [sorting, setSorting] = React.useState<SortingState>([]);
 
   const table = useReactTable({
-    data,
+    data: files,
     columns,
     state: {
+      pagination,
       sorting,
       columnVisibility,
       rowSelection,
       columnFilters,
     },
+
+    onPaginationChange: setPagination,
+    manualPagination: true, //we're doing manual "server-side" pagination
+    rowCount: total,
+
     enableRowSelection: true,
     onRowSelectionChange: setRowSelection,
     onSortingChange: setSorting,
@@ -65,7 +134,6 @@ export function FileTable<TData, TValue>({
     onColumnVisibilityChange: setColumnVisibility,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),

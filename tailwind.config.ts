@@ -20,6 +20,8 @@ const config = {
     extend: {
       fontFamily: {
         thai: ["var(--font-inter)", "var(--font-thai)"],
+        semibold: ["var(--font-inter)", "var(--font-thai)"],
+        medium: ["var(--font-inter)", "var(--font-thai)"],
       },
       colors: {
         border: "hsl(var(--border))",

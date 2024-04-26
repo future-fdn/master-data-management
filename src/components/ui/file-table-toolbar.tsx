@@ -8,6 +8,7 @@ import { DataTableViewOptions } from "@/components/ui/data-table-view-options";
 import { Input } from "@/components/ui/input";
 
 import { types } from "@/data/files/data";
+import UploadButton from "../upload-button";
 import { DataTableFacetedFilter } from "./data-table-faceted-filter";
 
 interface DataTableToolbarProps<TData> {
@@ -51,6 +52,7 @@ export function FileTableToolbar<TData>({
         )}
       </div>
       <DataTableViewOptions table={table} />
+      <UploadButton />
     </div>
   );
 }

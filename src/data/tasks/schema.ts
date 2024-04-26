@@ -13,4 +13,9 @@ export const taskSchema = z.object({
   ended: z.coerce.date(),
 });
 
+export const tasksSchema = z.object({
+  tasks: z.array(taskSchema),
+  total: z.number(),
+});
+
 export type Task = z.infer<typeof taskSchema>;

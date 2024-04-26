@@ -1,36 +1,40 @@
 "use client";
 import * as d3 from "d3";
 import { useEffect, useRef } from "react";
+import { createContextMenu } from "./contextMenu";
 
-const DistanceChart = () => {
+interface DistanceChartProps {
+  allLinks: any[];
+  allNodes: any[];
+}
+
+const DistanceChart = ({ allLinks, allNodes }: DistanceChartProps) => {
   const svgRef = useRef(null);
 
-  // Fake data for links
-  const fakeLinks = [
-    { source: "กรุงเทพมหานคร", target: "เชียงใหม่", distance: 50, partial: 70 },
-    { source: "เชียงใหม่", target: "เชียงราย", distance: 0, partial: 50 },
-    { source: "เชียงราย", target: "กรุงเทพมหานคร", distance: 70, partial: 100 },
-    { source: "ขอนแก่น", target: "อุบลราชธานี", distance: 100, partial: 30 },
-    // Add more fake links as needed
-  ];
-
-  // Fake data for nodes
-  const fakeNodes = [
-    { id: "กรุงเทพมหานคร", group: 1 },
-    { id: "เชียงใหม่", group: 2 },
-    { id: "เชียงราย", group: 1 },
-    { id: "ขอนแก่น", group: 1 },
-    { id: "อุบลราชธานี", group: 2 },
-    // Add more fake nodes as needed
+  //Menu Item
+  const menuItems = [
+    {
+      title: "First action",
+      action: (d) => {
+        // TODO: add any action you want to perform
+        console.log(d);
+      },
+    },
+    {
+      title: "Second action",
+      action: (d) => {
+        // TODO: add any action you want to perform
+        console.log(d);
+      },
+    },
   ];
 
   // Create copies of the fake data to avoid mutation
-  const links = fakeLinks.map((d) => ({ ...d }));
-  const nodes = fakeNodes.map((d) => ({ ...d }));
-
+  const links = allLinks.map((d) => ({ ...d }));
+  const nodes = allNodes.map((d) => ({ ...d }));
   // Specify the dimensions of the chart.
-  const width = 928;
-  const height = 680;
+  const width = 500 * 2;
+  const height = 350 * 2;
 
   // Specify the color scale.
   const color = d3.scaleOrdinal(d3.schemeCategory10);
@@ -38,17 +42,15 @@ const DistanceChart = () => {
   useEffect(() => {
     // Create a simulation with several forces.
     const simulation = d3
-      // @ts-expect-error
       .forceSimulation(nodes)
       .force(
         "link",
         d3
           .forceLink(links)
-          // @ts-expect-error
           .id((d) => d.id)
-          .distance((d) => d.distance + 100),
+          .distance((d) => d.distance + 60),
       )
-      .force("charge", d3.forceManyBody().strength(-1000))
+      .force("charge", d3.forceManyBody().strength(-500))
       .force("x", d3.forceX())
       .force("y", d3.forceY());
 
@@ -58,7 +60,8 @@ const DistanceChart = () => {
       .attr("width", width)
       .attr("height", height)
       .attr("viewBox", [-width / 2, -height / 2, width, height])
-      .attr("style", "max-width: 100%; height: auto;");
+      .attr("style", "max-width: 100%; height: auto;")
+      .attr("id", "graphSvg");
 
     // Remove any existing links and nodes
     svg.selectAll("line").remove();
@@ -88,7 +91,6 @@ const DistanceChart = () => {
 
     // Add a label drag behavior.
     nodeLabels.call(
-      // @ts-expect-error
       d3
         .drag()
         .on("start", dragstarted)
@@ -102,15 +104,24 @@ const DistanceChart = () => {
       .selectAll("circle")
       .data(nodes)
       .join("circle")
+      .on("contextmenu", (event, d) => {
+        event.preventDefault();
+        const mouseX =
+          event.clientX -
+          (svg.node().getBoundingClientRect().left +
+            svg.node().getBoundingClientRect().width / 2);
+        const mouseY =
+          event.clientY -
+          (svg.node().getBoundingClientRect().top +
+            svg.node().getBoundingClientRect().height / 2);
+        createContextMenu(d, menuItems, mouseX, mouseY, "#graphSvg");
+      })
       .attr("r", 20)
-      // @ts-expect-error
       .attr("stroke", (d) => color(d.group))
-      // @ts-expect-error
       .attr("fill", (d) => d3.interpolateRgb(color(d.group), "white")(0.6));
 
     // Add a node drag behavior.
     node.call(
-      // @ts-expect-error
       d3
         .drag()
         .on("start", dragstarted)
@@ -121,18 +132,13 @@ const DistanceChart = () => {
     // Set the position attributes of links and nodes each time the simulation ticks.
     simulation.on("tick", () => {
       link
-        // @ts-expect-error
         .attr("x1", (d) => d.source.x)
-        // @ts-expect-error
         .attr("y1", (d) => d.source.y)
-        // @ts-expect-error
         .attr("x2", (d) => d.target.x)
-        // @ts-expect-error
         .attr("y2", (d) => d.target.y);
 
-      // @ts-expect-error
       node.attr("cx", (d) => d.x).attr("cy", (d) => d.y);
-      // @ts-expect-error
+
       nodeLabels.attr("x", (d) => d.x).attr("y", (d) => d.y + 35);
     });
 

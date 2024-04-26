@@ -1,10 +1,11 @@
 "use client";
 
-import { fileSchema } from "@/data/files/schema";
+import { filesSchema } from "@/data/files/schema";
 import { env } from "@/env";
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { z } from "zod";
+import { getToken } from "../../actions/cookies";
 import CompletenessCard from "../../components/data-quality/completeness";
 import MasterRecordsCard from "../../components/data-quality/master-records";
 import QueryRecordsCard from "../../components/data-quality/query-records";
@@ -22,24 +23,67 @@ import OverallState from "../../components/visualize/overallstate";
 import { columns } from "../../data/files/columns";
 
 async function getFiles() {
+  const token = await getToken();
   const data = await axios
-    .get(env.NEXT_PUBLIC_API + "/files")
+    .get(env.NEXT_PUBLIC_API + "/files", {
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    })
     .then((response) => response.data)
     .catch((error) => {
       console.log(error);
     });
 
-  return z.array(fileSchema).parse(data.files);
+  return filesSchema.parse(data);
+}
+
+async function getStats() {
+  const token = await getToken();
+  const data = await axios
+    .get(env.NEXT_PUBLIC_API + "/files/stats", {
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    })
+    .then((response) => response.data)
+    .catch((error) => {
+      console.log(error);
+    });
+
+  return data;
+}
+
+async function getGraphData() {
+  const token = await getToken();
+  const data = await axios
+    .get(env.NEXT_PUBLIC_API + "/files/graph", {
+      headers: {
+        Authorization: "Bearer " + token,
+      },
+    })
+    .then((response) => response.data)
+    .catch((error) => {
+      console.log(error);
+    });
+
+  return data;
 }
 
 export default function dataquality() {
-  type FileState = z.infer<typeof fileSchema>;
-  const [files, setFiles] = useState<FileState[]>([]);
+  type FilesState = z.infer<typeof filesSchema>;
+  const [files, setFiles] = useState<FilesState>();
+  const [stats, setStats] = useState<any>({});
+  const [graph, setGraph] = useState<any>({});
 
   useEffect(() => {
     async function fetchFiles() {
       const data = await getFiles();
+      const stats = await getStats();
+      const graph = await getGraphData();
       setFiles(data);
+      setStats(stats);
+      setGraph(graph);
     }
 
     fetchFiles();
@@ -50,10 +94,22 @@ export default function dataquality() {
       <div className="m-14 space-y-3">
         <h1 className="mb-11 text-2xl font-bold">Overall Data Quality</h1>
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-          <CompletenessCard />
-          <UniquenessCard />
-          <QueryRecordsCard />
-          <MasterRecordsCard />
+          <CompletenessCard
+            percentage={stats.overall_completeness}
+            diff={stats.completeness_diff}
+          />
+          <UniquenessCard
+            percentage={stats.overall_completeness}
+            diff={stats.completeness_diff}
+          />
+          <QueryRecordsCard
+            value={stats.total_query_records}
+            diff={stats.query_records_diff}
+          />
+          <MasterRecordsCard
+            value={stats.total_master_records}
+            diff={stats.master_records_diff}
+          />
         </div>
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
           <Card className="col-span-4">
@@ -61,7 +117,15 @@ export default function dataquality() {
               <CardTitle>Overview</CardTitle>
             </CardHeader>
             <CardContent className="h-[340px] pl-2">
-              <OverallState data={files} />
+              {graph?.datas && (
+                <OverallState
+                  data={graph.datas.map((value) => {
+                    const date = new Date(value.date);
+                    date.setHours(0, 0, 0, 0);
+                    return { date: date, value: value.value };
+                  })}
+                />
+              )}
             </CardContent>
           </Card>
           <Card className="col-span-3">
@@ -74,7 +138,11 @@ export default function dataquality() {
             <CardContent>
               <div className="h-full">
                 <FileTable
-                  data={files.filter((data) => data.type == "QUERY")}
+                  data={(files?.files ?? []).filter(
+                    (data) => data.type == "QUERY",
+                  )}
+                  total={files?.total ?? 0}
+                  file_type={"QUERY"}
                   columns={columns.filter(
                     (data) =>
                       // @ts-expect-error

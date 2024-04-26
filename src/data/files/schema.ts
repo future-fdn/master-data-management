@@ -16,4 +16,9 @@ export const fileSchema = z.object({
   url: z.string(),
 });
 
+export const filesSchema = z.object({
+  files: z.array(fileSchema),
+  total: z.number(),
+});
+
 export type File = z.infer<typeof fileSchema>;

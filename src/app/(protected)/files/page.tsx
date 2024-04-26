@@ -1,13 +1,13 @@
 "use client";
 
-import { fileSchema } from "@/data/files/schema";
-import { z } from "zod";
+import { filesSchema } from "@/data/files/schema";
 
 import { FileTable } from "@/components/ui/file-table";
 import { columns } from "@/data/files/columns";
 import { env } from "@/env";
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { z } from "zod";
 import { getToken } from "../../../actions/cookies";
 
 async function getFiles() {
@@ -22,11 +22,13 @@ async function getFiles() {
     .catch((error) => {
       console.log(error);
     });
-  return z.array(fileSchema).parse(data.files);
+  return filesSchema.parse(data);
 }
 
 export default function FilesPage() {
-  const [files, setFiles] = useState([]);
+  type Files = z.infer<typeof filesSchema>;
+
+  const [files, setFiles] = useState<Files>();
 
   useEffect(() => {
     async function fetchData() {
@@ -39,7 +41,12 @@ export default function FilesPage() {
   return (
     <div className="m-14 h-full">
       <h1 className="mb-11 text-2xl font-bold">My Files</h1>
-      <FileTable data={files} columns={columns} />
+      <FileTable
+        data={files?.files ?? []}
+        total={files?.total ?? 0}
+        file_type={"QUERY"}
+        columns={columns}
+      />
     </div>
   );
 }
