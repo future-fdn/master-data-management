@@ -64,7 +64,7 @@ export default function UploadButton() {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     const token = await getToken();
-    var body = new FormData();
+    const body = new FormData();
 
     body.append("file_name", values.file_name);
     body.append("file_type", values.file_type);
@@ -82,9 +82,11 @@ export default function UploadButton() {
         console.log(error);
       });
 
-    var fileData = await axios.get(file.url).then((response) => response.data);
+    const fileData = await axios
+      .get(file.url)
+      .then((response) => response.data);
 
-    var fileBody = new FormData();
+    const fileBody = new FormData();
     fileBody.append("key", data.upload_detail.fields.key);
     fileBody.append("AWSAccessKeyId", data.upload_detail.fields.AWSAccessKeyId);
     fileBody.append("policy", data.upload_detail.fields.policy);

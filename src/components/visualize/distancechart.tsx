@@ -47,6 +47,7 @@ const DistanceChart = ({ allLinks, allNodes }: DistanceChartProps) => {
         "link",
         d3
           .forceLink(links)
+          // @ts-ignore
           .id((d) => d.id)
           .distance((d) => d.distance + 60),
       )

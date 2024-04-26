@@ -35,7 +35,9 @@ const qualitychart = ({ graphData }: QualityChartProps) => {
     //  Setup functions to draw Lines ---------------//
     const generateScaledLine = d3
       .line()
+      // @ts-ignore
       .x((d) => xScale(d.date))
+      // @ts-ignore
       .y((d) => yScale(d.value));
 
     // setting the axes
@@ -71,6 +73,7 @@ const qualitychart = ({ graphData }: QualityChartProps) => {
     circles.each(function (d) {
       // 'this' refers to the current circle element
       const percent = d3
+        // @ts-ignore
         .select(this.parentNode) // Select the parent of the circle (i.e., the SVG)
         .append("text")
         .text(d3.format(".0f")(d.value) + "%")
@@ -80,7 +83,7 @@ const qualitychart = ({ graphData }: QualityChartProps) => {
         .attr("fill", "#000000")
         .style("opacity", 0);
 
-      var focus = svg
+      const focus = svg
         .append("g")
         .append("circle")
         .style("fill", "none")

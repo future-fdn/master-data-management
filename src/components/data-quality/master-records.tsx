@@ -10,7 +10,7 @@ export default function MasterRecordsCard({
   value,
   diff,
 }: MasterRecordsCardProps) {
-  let formatter = Intl.NumberFormat("en", { notation: "compact" });
+  const formatter = Intl.NumberFormat("en", { notation: "compact" });
 
   return (
     <Card>
