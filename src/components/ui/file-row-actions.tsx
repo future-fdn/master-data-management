@@ -208,9 +208,17 @@ export function DataTableRowActions<TData>({
 
               <DropdownMenuItem
                 onClick={async () => {
+                  const token = await getToken();
                   await axios
-                    .delete(env.NEXT_PUBLIC_API + "/files/" + file_id)
-                    .catch((error) => toast(error));
+                    .delete(env.NEXT_PUBLIC_API + "/files/" + file_id, {
+                      headers: {
+                        Authorization: "Bearer " + token,
+                      },
+                    })
+                    .then((response) => toast("Deleted file successfully"))
+                    .catch((error) => {
+                      toast(error);
+                    });
 
                   router.refresh();
                 }}
