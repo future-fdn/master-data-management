@@ -97,6 +97,19 @@ export default function UploadButton() {
       .post(data.upload_detail.url, fileBody, {
         headers: { "Content-Type": "multipart/form-data" },
       })
+      .then((response) => response.data)
+      .catch((error) => toast(error));
+
+    await axios
+      .put(
+        env.NEXT_PUBLIC_API + "/files/" + data.file_id,
+        {},
+        {
+          headers: {
+            Authorization: "Bearer " + token,
+          },
+        },
+      )
       .then((response) => toast("Uploaded successfully"))
       .catch((error) => toast(error));
   }
@@ -114,9 +127,9 @@ export default function UploadButton() {
             <Dialog>
               <DialogContent className="sm:max-w-md">
                 <DialogHeader>
-                  <DialogTitle>Share link</DialogTitle>
+                  <DialogTitle>Upload</DialogTitle>
                   <DialogDescription>
-                    Anyone who has this link will be able to view this.
+                    Upload file into the system.
                   </DialogDescription>
                 </DialogHeader>
                 <Dropzone
@@ -143,9 +156,9 @@ export default function UploadButton() {
             <Dialog>
               <DialogContent className="sm:max-w-md">
                 <DialogHeader>
-                  <DialogTitle>Share link</DialogTitle>
+                  <DialogTitle>Upload</DialogTitle>
                   <DialogDescription>
-                    Anyone who has this link will be able to view this.
+                    Upload file into the system.
                   </DialogDescription>
                 </DialogHeader>
 
@@ -241,7 +254,7 @@ export default function UploadButton() {
                       />
                     </div>
                     <DialogFooter className="sm:justify-between">
-                      <mdb.Trigger value="drop_file">
+                      <mdb.Trigger value="info">
                         <Button
                           type="button"
                           variant="link"

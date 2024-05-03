@@ -1,7 +1,6 @@
 "use client";
 import * as d3 from "d3";
 import { useEffect, useRef } from "react";
-import { createContextMenu } from "./contextMenu";
 
 interface DistanceChartProps {
   allLinks: any[];
@@ -11,30 +10,14 @@ interface DistanceChartProps {
 const DistanceChart = ({ allLinks, allNodes }: DistanceChartProps) => {
   const svgRef = useRef(null);
 
-  //Menu Item
-  const menuItems = [
-    {
-      title: "First action",
-      action: (d) => {
-        // TODO: add any action you want to perform
-        console.log(d);
-      },
-    },
-    {
-      title: "Second action",
-      action: (d) => {
-        // TODO: add any action you want to perform
-        console.log(d);
-      },
-    },
-  ];
-
   // Create copies of the fake data to avoid mutation
+
   const links = allLinks.map((d) => ({ ...d }));
   const nodes = allNodes.map((d) => ({ ...d }));
+
   // Specify the dimensions of the chart.
-  const width = 500 * 2;
-  const height = 350 * 2;
+  const width = 928;
+  const height = 680;
 
   // Specify the color scale.
   const color = d3.scaleOrdinal(d3.schemeCategory10);
@@ -49,11 +32,26 @@ const DistanceChart = ({ allLinks, allNodes }: DistanceChartProps) => {
           .forceLink(links)
           // @ts-ignore
           .id((d) => d.id)
-          .distance((d) => d.distance + 60),
+          .distance((d) => d.distance + 100),
       )
-      .force("charge", d3.forceManyBody().strength(-500))
+      .force("charge", d3.forceManyBody().strength(-1000))
       .force("x", d3.forceX())
       .force("y", d3.forceY());
+
+    const zoom = d3.zoom().on("zoom", handleZoom);
+
+    function handleZoom(event) {
+      if (!event.transform) return; // Check if event.transform is defined
+
+      // Update the transformation of the SVG container
+      d3.select(svgRef.current)
+        .selectAll("g")
+        .attr("transform", event.transform);
+
+      d3.select(svgRef.current)
+        .selectAll("text")
+        .attr("transform", event.transform);
+    }
 
     // Create the SVG container.
     const svg = d3
@@ -62,7 +60,8 @@ const DistanceChart = ({ allLinks, allNodes }: DistanceChartProps) => {
       .attr("height", height)
       .attr("viewBox", [-width / 2, -height / 2, width, height])
       .attr("style", "max-width: 100%; height: auto;")
-      .attr("id", "graphSvg");
+      .attr("id", "graphSvg")
+      .call(zoom);
 
     // Remove any existing links and nodes
     svg.selectAll("line").remove();
@@ -105,18 +104,6 @@ const DistanceChart = ({ allLinks, allNodes }: DistanceChartProps) => {
       .selectAll("circle")
       .data(nodes)
       .join("circle")
-      .on("contextmenu", (event, d) => {
-        event.preventDefault();
-        const mouseX =
-          event.clientX -
-          (svg.node().getBoundingClientRect().left +
-            svg.node().getBoundingClientRect().width / 2);
-        const mouseY =
-          event.clientY -
-          (svg.node().getBoundingClientRect().top +
-            svg.node().getBoundingClientRect().height / 2);
-        createContextMenu(d, menuItems, mouseX, mouseY, "#graphSvg");
-      })
       .attr("r", 20)
       .attr("stroke", (d) => color(d.group))
       .attr("fill", (d) => d3.interpolateRgb(color(d.group), "white")(0.6));

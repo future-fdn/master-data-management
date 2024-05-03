@@ -21,16 +21,47 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { env } from "@/env";
 import { deleteUserCookie } from "@/server/cookies";
+import { zodResolver } from "@hookform/resolvers/zod";
 import axios from "axios";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 import user from "public/user.svg";
 import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { z } from "zod";
+import { Form, FormControl, FormField, FormItem, FormMessage } from "./ui/form";
+
+const formSchema = z.object({
+  password: z.string().min(8, {
+    message: "Password have to be at least 8 characters",
+  }),
+});
 
 export default function Account() {
-  const router = useRouter();
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+  });
 
   const [username, setUsername] = useState(false);
+
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    const token = await getToken();
+    const result = await axios
+      .post(
+        env.NEXT_PUBLIC_API + "/change_password",
+        {
+          password: values.password,
+        },
+        {
+          headers: {
+            Authorization: "Bearer " + token,
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+        },
+      )
+      .then((response) => toast(response.data?.detail))
+      .catch((error) => toast(error));
+  }
 
   useEffect(() => {
     async function getUsername() {
@@ -75,38 +106,46 @@ export default function Account() {
       </DropdownMenu>
 
       <DialogContent className="sm:max-w-[425px]">
-        <DialogHeader>
-          <DialogTitle>Change password</DialogTitle>
-          <DialogDescription>
-            {"Make changes to your password here. Click save when you're done."}
-          </DialogDescription>
-        </DialogHeader>
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)}>
+            <DialogHeader>
+              <DialogTitle>Change password</DialogTitle>
+              <DialogDescription>
+                {
+                  "Make changes to your password here. Click save when you're done."
+                }
+              </DialogDescription>
+            </DialogHeader>
 
-        <div className="grid gap-4 py-4">
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="password" className="text-right">
-              Password
-            </Label>
-            <Input
-              id="password"
-              placeholder="Password"
-              className="col-span-3"
-            />
-          </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="confirm_password" className="text-right">
-              Confirm Password
-            </Label>
-            <Input
-              id="confirm_password"
-              placeholder="Confirm Password"
-              className="col-span-3"
-            />
-          </div>
-        </div>
-        <DialogFooter>
-          <Button type="submit">Save changes</Button>
-        </DialogFooter>
+            <div className="grid gap-4 py-4">
+              <div className="grid grid-cols-4 items-center gap-4">
+                <Label htmlFor="password" className="text-right">
+                  Password
+                </Label>
+                <FormField
+                  control={form.control}
+                  name="password"
+                  render={({ field }) => (
+                    <FormItem className="col-span-3">
+                      <FormControl>
+                        <Input
+                          id="password"
+                          placeholder="Password"
+                          type="password"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </div>
+            <DialogFooter>
+              <Button type="submit">Save changes</Button>
+            </DialogFooter>
+          </form>
+        </Form>
       </DialogContent>
     </Dialog>
   );

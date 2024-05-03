@@ -10,7 +10,6 @@ import {
 } from "@/components/ui/table";
 import {
   ColumnDef,
-  ColumnFiltersState,
   PaginationState,
   SortingState,
   VisibilityState,
@@ -18,7 +17,6 @@ import {
   getCoreRowModel,
   getFacetedRowModel,
   getFacetedUniqueValues,
-  getFilteredRowModel,
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
@@ -107,9 +105,6 @@ export function FileTable<TData, TValue>({
   const [rowSelection, setRowSelection] = React.useState({});
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    [],
-  );
   const [sorting, setSorting] = React.useState<SortingState>([]);
 
   const table = useReactTable({
@@ -120,7 +115,6 @@ export function FileTable<TData, TValue>({
       sorting,
       columnVisibility,
       rowSelection,
-      columnFilters,
     },
 
     onPaginationChange: setPagination,
@@ -130,10 +124,8 @@ export function FileTable<TData, TValue>({
     enableRowSelection: true,
     onRowSelectionChange: setRowSelection,
     onSortingChange: setSorting,
-    onColumnFiltersChange: setColumnFilters,
     onColumnVisibilityChange: setColumnVisibility,
     getCoreRowModel: getCoreRowModel(),
-    getFilteredRowModel: getFilteredRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),

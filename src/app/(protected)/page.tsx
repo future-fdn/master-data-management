@@ -95,20 +95,20 @@ export default function dataquality() {
         <h1 className="mb-11 text-2xl font-bold">Overall Data Quality</h1>
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           <CompletenessCard
-            percentage={stats.overall_completeness}
-            diff={stats.completeness_diff}
+            percentage={stats?.overall_completeness ?? "0%"}
+            diff={stats?.completeness_diff ?? "+0%"}
           />
           <UniquenessCard
-            percentage={stats.overall_completeness}
-            diff={stats.completeness_diff}
+            percentage={stats?.overall_uniqueness ?? "0%"}
+            diff={stats?.uniqueness_diff ?? "+0%"}
           />
           <QueryRecordsCard
-            value={stats.total_query_records}
-            diff={stats.query_records_diff}
+            value={stats?.total_query_records ?? 0}
+            diff={stats?.query_records_diff ?? 0}
           />
           <MasterRecordsCard
-            value={stats.total_master_records}
-            diff={stats.master_records_diff}
+            value={stats?.total_master_records ?? 0}
+            diff={stats?.master_records_diff ?? 0}
           />
         </div>
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
@@ -132,7 +132,8 @@ export default function dataquality() {
             <CardHeader>
               <CardTitle>Recent Files</CardTitle>
               <CardDescription>
-                You uploaded total of 265 files this month.
+                You uploaded total of {stats?.this_month_query_data ?? 0} files
+                this month.
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -156,11 +157,6 @@ export default function dataquality() {
             </CardContent>
           </Card>
         </div>
-        {/* <OverallState data={files} />
-      <FileTable
-        data={files.filter((data) => data.type == "QUERY")}
-        columns={columns}
-      /> */}
       </div>
     </ScrollArea>
   );
