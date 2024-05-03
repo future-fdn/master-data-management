@@ -101,7 +101,7 @@ export default function UploadButton() {
       .catch((error) => toast(error));
 
     await axios
-      .put(
+      .patch(
         env.NEXT_PUBLIC_API + "/files/" + data.file_id,
         {},
         {
