@@ -103,7 +103,7 @@ export default function dataquality() {
             diff={stats?.uniqueness_diff ?? "+0%"}
           />
           <QueryRecordsCard
-            value={stats?.total_query_records ?? 0}
+            value={stats?.this_month_query_data ?? 0}
             diff={stats?.query_records_diff ?? 0}
           />
           <MasterRecordsCard
