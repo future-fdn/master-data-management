@@ -11,6 +11,11 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import axios from "axios";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import { getToken } from "../../actions/cookies";
+import { env } from "../../env";
 
 interface DataTableRowActionsProps<TData> {
   row: Row<TData>;
@@ -19,6 +24,8 @@ interface DataTableRowActionsProps<TData> {
 export function DataTableRowActions<TData>({
   row,
 }: DataTableRowActionsProps<TData>) {
+  const router = useRouter();
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -31,7 +38,23 @@ export function DataTableRowActions<TData>({
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-[160px]">
-        <DropdownMenuItem>
+        <DropdownMenuItem
+          onClick={async () => {
+            const token = await getToken();
+            await axios
+              .delete(env.NEXT_PUBLIC_API + "/users/" + row.getValue("id"), {
+                headers: {
+                  Authorization: "Bearer " + token,
+                },
+              })
+              .then((response) => toast("Deleted user successfully"))
+              .catch((error) => {
+                toast(error);
+              });
+
+            router.refresh();
+          }}
+        >
           Delete
           <DropdownMenuShortcut>⌘⌫</DropdownMenuShortcut>
         </DropdownMenuItem>
